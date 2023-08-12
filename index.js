@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require("mongoose");
 const visitorSchema = require("./src/model/visitsorModel.js");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 require("dotenv").config();
 
@@ -27,6 +28,14 @@ mongoose.connection.on("connected", () => {
 
 app.use(bodyParser.json());
 
+app.use(
+  cors({
+    origin: "*", // Allow requests from any origin, change this to restrict origins
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  })
+);
 app.get("/", (req, res) => {
   res.send("Hello World! Service is running");
 });
