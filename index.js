@@ -31,9 +31,6 @@ app.use(bodyParser.json());
 app.use(
   cors({
     origin: "*", // Allow requests from any origin, change this to restrict origins
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    preflightContinue: false,
-    optionsSuccessStatus: 204,
   })
 );
 app.get("/", (req, res) => {
