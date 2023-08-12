@@ -6,31 +6,34 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 require("dotenv").config();
+startApp();
 
-mongoose
-  .connect(process.env.mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then((result) => {
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+async function startApp() {
+  mongoose
+    .connect(process.env.mongoURI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then((result) => {
+      app.listen(3000, () => {
+        console.log("Server is running on port 3000");
+      });
+    })
+    .catch((err) => {
+      console.log(err);
     });
-  })
-  .catch((err) => {
-    console.log(err);
+
+  mongoose.connection.on("connected", () => {
+    visitorSchema.ensureIndexes();
+    console.log("Mongoose is connected");
   });
-
-mongoose.connection.on("connected", () => {
-  visitorSchema.ensureIndexes();
-  console.log("Mongoose is connected");
-});
-
+}
 app.use(bodyParser.json());
 
 app.use(
   cors({
-    origin: "*", // Allow requests from any origin, change this to restrict origins
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 app.get("/", (req, res) => {
@@ -51,3 +54,17 @@ process.on("unhandledRejection", (err) => {
 app.use((req, res, next) => {
   res.status(404).send("Sorry can't find that!");
 });
+
+const aliveSchema = require("./src/model/aliveModel.js");
+
+setInterval(async () => {
+  fetch("https://visitor.cyclic.app/")
+    .then(async (data) => {
+      const alive = await aliveSchema.findOne({});
+      console.log(`pinged the Webpage and database at ${Date.now()}`);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return 0;
+}, 1000 * 36000);

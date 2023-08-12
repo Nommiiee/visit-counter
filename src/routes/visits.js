@@ -14,6 +14,7 @@ router.get("/:indentifier", async (req, res) => {
         totalVisits: 1,
       });
       await newVisitor.save();
+      
       res.json(newVisitor);
     } else {
       visitor.totalVisits += 1;
