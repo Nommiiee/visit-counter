@@ -4,14 +4,21 @@ const mongoose = require("mongoose");
 const visitorSchema = require("./src/model/visitsorModel.js");
 const bodyParser = require("body-parser");
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
-});
+require("dotenv").config();
 
-mongoose.connect("mongodb://127.0.0.1:27017/visitors", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose
+  .connect(process.env.mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then((result) => {
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 mongoose.connection.on("connected", () => {
   visitorSchema.ensureIndexes();
@@ -19,6 +26,10 @@ mongoose.connection.on("connected", () => {
 });
 
 app.use(bodyParser.json());
+
+app.get("/", (req, res) => {
+  res.send("Hello World! Service is running");
+});
 
 const visit = require("./src/routes/visits.js");
 app.use("/visits", visit);
