@@ -23,7 +23,7 @@ Visit Counter is a lightweight backend API service that tracks page or endpoint 
 
 ## 📦 Example Usage
 
-### POST `/api/visit`
+### POST `/api/visits`
 **Payload:**
 ```json
 {
